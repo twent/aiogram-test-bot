@@ -5,6 +5,7 @@ import asyncio
 from aiogram import types
 from aiogram.types import ChatActions
 
+from handlers.types import MessageType
 from messages import text
 from bot import dispatcher, bot
 from keyboards import client as client_keyboard
@@ -40,11 +41,12 @@ async def default_answer(message: types.Message):
     await send_answer(message, text['default_answer'], "reply", client_keyboard.main)
 
 # Базовая функция для ответа
-async def send_answer(message: types.Message, answer="", message_type="answer", markup=None, sleep=2, delete=False):
+async def send_answer(message: types.Message, answer="", message_type: MessageType = "answer", markup=None, sleep=2, delete=False):
     try:
         await asyncio.sleep(sleep-1)
         await bot.send_chat_action(message.chat.id, ChatActions.TYPING)
         await asyncio.sleep(sleep)
+        # Calling message.reply or message.answer method with or w/o markup 
         await getattr(message, message_type)(answer, reply_markup=markup) if markup else await getattr(message, message_type)(answer)
         if delete == True:
             await message.delete()
